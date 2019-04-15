@@ -1,0 +1,23 @@
+ {
+  "presets": [
+    ["@babel/preset-react"],
+    ["@babel/preset-typescript"],
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage"
+      }
+    ]
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }],
+    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }] // `style: true` for less
+  ],
+  "overrides":[
+    {
+      "test":["./webpack/**/*"],
+      "presets":[["@babel/preset-env"]]
+    }
+  ]
+}
