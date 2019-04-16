@@ -9,12 +9,13 @@ export interface  ITodoItem {
 
 export interface ITodoStore {
   todoItem: ITodoItem[];
-notDone:number;
-hasDone: number;
-checked:(id:number) => void;
+  notDone:number;
+  hasDone: number;
+  checked:(id:number) => void;
 }
 
 class TodoStore implements ITodoStore {
+
   @observable public todoItem = [
     { id: 1, content: "起床", isFinished: true },
     { id: 2, content: "刷牙洗脸", isFinished: true },
@@ -23,6 +24,8 @@ class TodoStore implements ITodoStore {
     { id: 5, content: "公交上看刷微博", isFinished: false },
     { id: 6, content: "工作", isFinished: false },
     { id: 7, content: "吃中饭", isFinished: false },
+    { id: 8, content: "跑步30min", isFinished: false },
+
   ];
 
   @computed
@@ -34,7 +37,7 @@ class TodoStore implements ITodoStore {
     return this.todoItem.filter(i => i.isFinished).length;
   }
   @observable
-   checked =(id:number) =>{
+   checked = (id:number) =>{
     this.todoItem =  this.todoItem.map(i => {
       if(i.id === id) {
         return { ...i, isFinished: !i.isFinished };
@@ -45,4 +48,5 @@ class TodoStore implements ITodoStore {
 
 }
 
-export default createContext(new TodoStore());
+// export default createContext(new TodoStore());
+export default new TodoStore();

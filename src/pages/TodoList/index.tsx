@@ -1,23 +1,21 @@
 import React,{useContext} from "react";
 import {Button,List,Icon,Alert} from "antd";
-import todoStore from '../stores/index';
 import {observer} from 'mobx-react-lite';
 import style from './index.module.less';
 import {Link} from 'react-router-dom';
-import Header from '../../components/Header/index';
+import ToDoContext from "../../stores/index";
+import TodoMes from '../../components/TodoMes/index'
 
 const ListItem = List.Item;
 
-const TodoList = observer((props:any) => {
-  // const { history } = props;
-  const store = useContext(todoStore);
- const {todoItem,notDone,hasDone,checked} = store;
 
+const TodoList = observer((props:any) => {
+  const store = useContext(ToDoContext);
+  const {todoItem,notDone,hasDone,checked} = store;
   console.log("store" ,store);
   return (
     <div>
-      {/* <Header/> */}
-      <h3 style={{ marginBottom: 16 ,textAlign:'center'}}>  计划列表：</h3>
+      <div className={style.header}>  计划列表：</div>
       <List  bordered
       dataSource={todoItem}
       renderItem={item => (<List.Item key={item.id} className={style.wrapper} onClick={() => checked(item.id)}>
@@ -33,12 +31,10 @@ const TodoList = observer((props:any) => {
         </div>
         </List.Item>)}
       />
+        <TodoMes hasDone={hasDone} notDone={notDone}></TodoMes>
 
-      <Alert message={`${hasDone} 个计划已完成`} type="success" className={style.message}/>
-      <Alert message={`${notDone} 个计划未完成`} type="warning" />
-      <Alert message={`完成度: ${hasDone} / ${notDone + hasDone}`} type="info" />
       <Link to="/result"  >
-        <Button type="primary" className={style.link}>跳到result页面，看结果</Button>
+        <Button type="primary" className={style.link}>去result页面</Button>
       </Link>
 
     </div>
