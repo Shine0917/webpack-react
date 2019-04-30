@@ -15,12 +15,12 @@ render() {
     <Router history={history}>
       <Switch>
         <Route exact path="/" render={() => (
-          <Redirect to="/todo"/>
+          <Redirect to="/hooks-todo"/>
         )}/>
-        <Route path="/todo" exact component={() => <TodoList list={todoList} />} />
-        <Route path="/result" exact component={Result} />
-        <Route path="/todo-c" exact component={() => <TodoListC list={todoList} />} />
-        <Route path="/result-c" exact component={ResultC} />
+        <Route path="/hooks-todo" exact component={() => <TodoList list={todoList} /> } />
+        <Route path="/hooks-result" exact component={Result} />
+        <Route path="/todo" exact component={() => <TodoListC list={todoList} />} />
+        <Route path="/result" exact component={ResultC} />
 
       </Switch>
     </Router>

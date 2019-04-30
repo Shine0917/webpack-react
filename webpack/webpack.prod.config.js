@@ -30,7 +30,7 @@ module.exports = merge(base,{
       chunks: 'all', // 匹配的块的类型：initial(初始块)、async(按需加载的异步块)、all(所有块)
       minSize: 40000, // 分离前的最小文件大小，单位-字节
       cacheGroups: { // 缓存组，存放分离代码块的规则对象。可以继承/覆盖上面 splitChunks 中所有的参数值
-        vendor: { // 把所有 node_modules 的模块被不同的 chunk 引入超过 1 次的抽取为 common
+        vendor: { 
           test: /[\\/]node_modules[\\/]/,
           name: 'vendor',
           chunks: 'initial',

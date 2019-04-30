@@ -1,5 +1,5 @@
 import React,{useContext} from "react";
-import {Button,List,Icon,Alert} from "antd";
+import {Button,List,Icon} from "antd";
 import {observer} from 'mobx-react-lite';
 import style from './index.module.less';
 import {Link} from 'react-router-dom';
@@ -8,11 +8,10 @@ import TodoMes from '../../components/TodoMes/index'
 
 const ListItem = List.Item;
 
-
 const TodoList = observer((props:any) => {
   const store = useContext(ToDoContext);
   const {todoItem,notDone,hasDone,checked} = store;
-  console.log("store" ,store);
+  // console.log("store" ,store);
   return (
     <div>
       <div className={style.header}>  计划列表：</div>
@@ -31,9 +30,9 @@ const TodoList = observer((props:any) => {
         </div>
         </List.Item>)}
       />
-        <TodoMes hasDone={hasDone} notDone={notDone}></TodoMes>
+      <TodoMes hasDone={hasDone} notDone={notDone}></TodoMes>
 
-      <Link to="/result"  >
+      <Link to="/hooks-result"  >
         <Button type="primary" className={style.link}>去result页面</Button>
       </Link>
 

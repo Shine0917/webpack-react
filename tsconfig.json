@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true, //允许从没有设置默认导出的模块中默认导入
     "esModuleInterop": true, //允许ts默认模式
     "outDir": "./dist",

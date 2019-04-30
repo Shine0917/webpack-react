@@ -11,7 +11,7 @@ import TodoMes from '../../components/TodoMes/index';
 class TodoListC extends React.Component {
   constructor(props){
     super(props);
-    console.log(this.props);
+    // console.log(this.props);
   }
 
   render() {
@@ -39,7 +39,7 @@ class TodoListC extends React.Component {
       <Alert message={`${notDone} 个计划未完成`} type="warning" />
       <Alert message={`完成度: ${hasDone} / ${notDone + hasDone}`} type="info" /> */}
 
-      <Link to="/result-c">
+      <Link to="/result">
         <Button type="primary" className={style.link}>去result页面</Button>
       </Link>
         </div>
