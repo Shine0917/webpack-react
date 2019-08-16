@@ -12,7 +12,10 @@
   "plugins": [
     ["@babel/plugin-proposal-decorators", { "legacy": true }],  //支持装饰器
     ["@babel/plugin-proposal-class-properties", { "loose": true }],
-    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }] // `style: true` for less  引入antd
+    ["@babel/plugin-transform-runtime", { "corejs": 2 }],
+
+    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }], // `style: true` for less  引入antd
+
   ],
   "overrides":[
     {

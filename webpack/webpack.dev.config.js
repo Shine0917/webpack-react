@@ -6,9 +6,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const merge = require('webpack-merge');
 const base = require('./webpack.base.config.js');
 const paths = require('./config/paths');
-const proxy = require('./config/proxy');
+const proxyConfig = require('./config/proxy');
+
 module.exports = merge(base,{
-  
   mode: 'development',
   devtool: 'source-map', // 选择一种source map 格式来增强调试过程，不同的值会明显影响到构建（build）和重新构建（rebuild）速度
   devServer: {
@@ -29,7 +29,7 @@ module.exports = merge(base,{
     hot: true,  //热加载
     host: "0.0.0.0", // 主机地址
     disableHostCheck: false, //为true时，绕过主机检查
-    proxy: {...proxyConfig}
+    proxy: { ...proxyConfig }
   },
   plugins: [
     // new HtmlWebpackPlugin({
@@ -46,7 +46,7 @@ module.exports = merge(base,{
   ],
   
   optimization: {
-    minimize: false,
+    // minimize: false,
     runtimeChunk: true,
   }
 });

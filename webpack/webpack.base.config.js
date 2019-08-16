@@ -9,7 +9,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin'); //  用于直接复制
 const paths = require('./config/paths');
 const getStyleLoader = require('./tools/getStyleLoaders');
 const getDllReferPlugins = require('./tools/getDllReferPlugins');
-const config = require('./config/')
+const config = require('./config/config');
+const modifyVars = require('./config/theme');
+const dllConfig = require('./webpack.dll.config');
+
 const OPEN_SOURCE_MAP = true;
 const isProd = process.env.NODE_ENV === 'production';
 const { USE_DLL}  = config;
