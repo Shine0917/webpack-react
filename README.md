@@ -11,3 +11,5 @@ TODO:
 2. - [ ] axios
 3. - [ ] git commit 规范
 4. - [ ] eslint
+5. - [ ] redux
+
