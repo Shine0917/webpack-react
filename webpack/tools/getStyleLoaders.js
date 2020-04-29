@@ -1,5 +1,5 @@
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'; // 将css提取到单独到文件在，它为每个包含css的js文件创建一个css文件
-
+ // 将css提取到单独到文件在，它为每个包含css的js文件创建一个css文件
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getStyleLoader = ({
   isProd,
   sourceMap = true,
@@ -37,5 +37,4 @@ const getStyleLoader = ({
     }
   ].filter(Boolean);
 }
-
-export default getStyleLoader;
+module.exports =  getStyleLoader;

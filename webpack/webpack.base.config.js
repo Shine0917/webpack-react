@@ -1,19 +1,33 @@
 const path = require('path');
 const webpack = require('webpack');
+const ProcessBarPlugin = require('progress-bar-webpack-plugin'); // webpack编译时显示进度条
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin'); // lodash 按需加载插件
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // 引入html-webpack-plugin 插件，作用是添加模版到编译完成后到dist到文件里面，用于生成html
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin'); // 用于添加js或者css文件路径（例如那些被copy-webpack-plugin插件编译的文件）
 const CopyWebpackPlugin = require('copy-webpack-plugin'); //  用于直接复制公共的文件
 const paths = require('./config/paths');
+const getStyleLoader = require('./tools/getStyleLoaders');
+const getDllReferPlugins = require('./tools/getDllReferPlugins');
+const config = require('./config/config');
+const modifyVars = require('./config/theme');
+const dllConfig = require('./webpack.dll.config');
+const OPEN_SOURCE_MAP = true;
+const isProd = process.env.NODE_ENV === 'production';
+const { USE_DLL}  = config;
 
 const REGEXP_SCRIPT = /\.(js|jsx)$/;
 const REGEXP_TYPESCRIPT = /\.(ts|tsx)$/;
 
 const REGEXP_IMAGE = /\.(bmp|gif|jpg|jpeg|png|svg)$/;
 const cssRegex = /\.css$/;
+const cssModuleRegex = /\.module\.css$/;
 const lessRegex = /\.less$/;
+const lessModuleRegex = /\.module\.less$/;
 
 module.exports = {
   // entry: path.resolve(__dirname, "../src/index.tsx"),
+  context: paths.appRoot,
   entry: [paths.appIndex],
   output: {
     path: paths.appDist,
@@ -26,7 +40,6 @@ module.exports = {
   },
   module: {
     strictExportPresence: true,
-
     rules: [
       {
         test: REGEXP_TYPESCRIPT,
@@ -74,7 +87,6 @@ module.exports = {
             
              }
            }
-
            ] 
           },
 
@@ -85,76 +97,156 @@ module.exports = {
         exclude: /node_modules/,
         use: ['babel-loader']
       },
-      
       {
         test: cssRegex,
-        use: [
-          'style-loader', 'css-loader'
-        ],
-        // exclude: /node_modules/
+        exclude: cssModuleRegex,
+        use: getStyleLoader({
+          isProd,
+          sourceMap: OPEN_SOURCE_MAP,
+          modules: false,
+          modifyVars,
+        }),
+        sideEffects: true,
       }, 
-      
-      {oneOf: [
-        {
-          test: /\.less$/,
-          use: [
-            'style-loader',
-            {
-              loader:'css-loader', 
-              options: {
-                sourceMap:true,
-                modules: true,
-              }
-            },
-            {
-              loader:'postcss-loader',
-            },
-          {
-              "loader": 'less-loader',
-              'options': {
-                javascriptEnabled: true
-              }
-            }
-          ],
-          exclude: /node_modules/
-        }, 
-        {
-          test: /\.module\.less$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            'postcss-loader',
-          {
-              "loader": 'less-loader',
-              'options': {
-                modules:true,
-                javascriptEnabled: true
-              }
-            }
-          ],
-          exclude: /node_modules/
-        }, 
-      ]
-    },
+      {
+        test:cssModuleRegex,
+        exclude: paths.appNodeModules,
+        use: getStyleLoader({
+          isProd,
+          sourceMap: OPEN_SOURCE_MAP,
+          modules: true,
+          modifyVars,
+        }),
+        sideEffects: true,
+      },
+      {
+        test: lessRegex,
+        exclude: lessModuleRegex,
+        use: getStyleLoader({
+          isProd,
+          sourceMap: OPEN_SOURCE_MAP,
+          modules: false,
+          useLess: true,
+          modifyVars,
+        }),
+        sideEffects: true,
+      },
+
+      {
+        test: lessModuleRegex,
+        exclude: paths.appNodeModules,
+        use: getStyleLoader({
+          isProd,
+          sourceMap: OPEN_SOURCE_MAP,
+          modules: true,
+          useLess: true,
+          modifyVars,
+        }),
+        sideEffects: true
+      },
+    //   {oneOf: [
+    //     {
+    //       test: lessRegex,
+    //       use: [
+    //         'style-loader',
+    //         {
+    //           loader:'css-loader', 
+    //           options: {
+    //             sourceMap:true,
+    //             modules: true,
+    //           }
+    //         },
+    //         {
+    //           loader:'postcss-loader',
+    //         },
+    //       {
+    //           "loader": 'less-loader',
+    //           'options': {
+    //             javascriptEnabled: true
+    //           }
+    //         }
+    //       ],
+    //       exclude: /node_modules/
+    //     }, 
+    //     {
+    //       test: /\.module\.less$/,
+    //       use: [
+    //         'style-loader',
+    //         'css-loader',
+    //         'postcss-loader',
+    //       {
+    //           "loader": 'less-loader',
+    //           'options': {
+    //             modules:true,
+    //             javascriptEnabled: true
+    //           }
+    //         }
+    //       ],
+    //       exclude: /node_modules/
+    //     }, 
+    //   ]
+    // },
       {
         test: /\.[(png)|(obj)|(json)]$/,
         loader: "file-loader"
+      },
+      {
+        exclude: [/\.(js | jsx)$/, /\.(html |ejs)$/, /\.(css|less)$/,/\.json$/],
+        include: paths.appSrc,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: 'other/[name].[hash:8].medo.[ext]',
+          }
+        }], // 其他文件
       }
     ]
   },
   
   plugins: [
     new HtmlWebpackPlugin({
+      title:'Demo | My Demo For Todo', // 配置生成的html的title, 不会主动替换，需要通过模板引擎语法获取来配置
+      filename: 'index.html',
       inject: true,
       template: path.resolve(__dirname, "../public/index.html"),
       minify: {
-        minifyJS: true,
-        minifyCSS: true,
-        minifyURLs: true,
+        removeComments: true,
+        collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        minifyJS: true, //压缩html 中出现的js代码
+        minifyCSS: true,  // 压缩html中出现的css代码
+        minifyURLs: true, 
       },
     }),
+
+    USE_DLL&& 
+    new HtmlWebpackIncludeAssetsPlugin({
+      assets: [
+        'react.todo.dll.js',
+        'reactDOM.todo.dll.js'
+      ],
+      append: false
+    }),
+    new webpack.IgnorePlugin(/^\.\/locale$/,/moment$/), //IgnorePlugin 防止在import或require调用时，生成以下正则表达式匹配的模块
+    new ProcessBarPlugin(),
+    new LodashModuleReplacementPlugin({
+      paths: true,
+    }),
+    new webpack.DefinePlugin({
+      'ENV_MOCK': process.env.MOCK !=='none'
+    }),
+    new CopyWebpackPlugin([
+      {
+        from: paths.appPublic
+      },
+      USE_DLL && {
+        from: paths.appDll,
+      }
+
+    ].filter(Boolean)),
+    ...getDllReferPlugins(dllConfig.entry),
    
-  ],
+  ].filter(Boolean),
   resolve: {
     alias:{
       "@": path.resolve(paths.appSrc)      
@@ -164,6 +256,7 @@ module.exports = {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".json"]
     // 避免新增默认文件，编码时使用详细的文件路径，代码会更容易解读，也有益于提高构建速度
   },
+ 
   
 }
 
