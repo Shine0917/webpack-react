@@ -1,0 +1,24 @@
+{
+  "javascript.implicitProjectConfig.experimentalDecorators": true,
+  // eslint 格式化插件,保存时应用eslint 规则自动格式化后保存
+  "eslint.autoFixOnSave": true,
+  // Enable/disable default JavaScript formatter (For Prettier)
+  "javascript.format.enable": false,
+  //为了符合eslint的两个空格间隔原则
+  "editor.tabSize": 2,
+  //编辑器失去焦点时自动保存更新后的文件
+  "files.autoSave": "onFocusChange",
+
+  "prettier.singleQuote": true,
+  // 点击保存时，根据 eslint 规则自定修复，同时集成 prettier 到 eslint 中
+  "emmet.triggerExpansionOnTab": true,
+  //关闭编辑器默认代码检查,为了不跟eslint配置冲突
+
+  "editor.formatOnSave": true,
+  // 去掉代码结尾分号
+  "prettier.semi": false,
+  "prettier.trailingComma": "all",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
+}
